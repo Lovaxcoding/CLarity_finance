@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:myapp/model/objectives.dart';
+import 'package:myapp/presentation/pages/Insights_page.dart';
 import 'package:myapp/presentation/pages/Welcome_Page.dart';
 import 'package:myapp/presentation/pages/complete_profile_page.dart';
+import 'package:myapp/presentation/pages/create_objective_page.dart';
 import 'package:myapp/presentation/pages/dashboard_page.dart';
 import 'package:myapp/presentation/pages/expense_entry_page.dart';
 import 'package:myapp/presentation/pages/budget_page.dart';
 import 'package:myapp/presentation/pages/filter_page.dart';
 import 'package:myapp/presentation/pages/income_entry_page.dart';
 import 'package:myapp/presentation/pages/login_page.dart';
+import 'package:myapp/presentation/pages/objectifDetailsPages.dart';
+import 'package:myapp/presentation/pages/objective.dart';
 import 'package:myapp/presentation/pages/settings_page.dart';
 import 'package:myapp/layout/home_shell.dart';
-import 'package:myapp/presentation/pages/home_page.dart';
-import 'package:myapp/presentation/pages/auth_flow.dart';
 import 'package:myapp/presentation/pages/Register_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -102,17 +105,64 @@ final router = GoRouter(
       builder: (context, state) =>
           const CompleteProfilePage(), // CRÉER CETTE PAGE
     ),
+
     // 3. ShellRoute pour l'Application principale (PROTÉGÉE)
     ShellRoute(
       builder: (context, state, child) => HomeShell(child: child),
       routes: [
         // La page d'accueil de l'application
-        GoRoute(path: '/', builder: (context, state) => const HomePage()),
+        GoRoute(path: '/', builder: (context, state) => const DashboardPage()),
 
         // Routes internes qui utilisent le HomeShell (Dashboards, etc.)
         GoRoute(
           path: '/dashboard',
           builder: (context, state) => const DashboardPage(),
+        ),
+        GoRoute(
+          path: '/objectives',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ObjectivesPage()),
+          routes: [
+            // Sous-route pour la création
+            GoRoute(
+              path: 'create', // Chemin devient '/objectives/create'
+              builder: (context, state) => const CreateObjectivePage(),
+            ),
+
+            // ✅ NOUVELLE SOUS-ROUTE POUR LES DÉTAILS ✅
+            GoRoute(
+              path: ':objectiveId', // Chemin devient '/objectives/ID_OBJECTIF'
+              builder: (context, state) {
+                // Utiliser un `tryCast` pour éviter le crash si 'extra' est null
+                final objective = state.extra as Objective?;
+
+                if (objective == null) {
+                  // Vous devez gérer le cas où l'Objective n'est pas passé via `extra`.
+                  // Il faudrait le charger depuis Supabase ici en utilisant l'`objectiveId`.
+                  final objectiveId = state.pathParameters['objectiveId']!;
+
+                  // Pour l'instant, on affiche une erreur pour éviter le crash
+                  return Text(
+                    'Erreur: Objectif $objectiveId introuvable (Chargement manquant)',
+                  );
+                }
+
+                return ObjectiveDetailPage(objective: objective);
+              },
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/objectives',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ObjectivesPage()),
+          routes: [
+            // Sous-route pour la création (poussée au-dessus de la barre de navigation)
+            GoRoute(
+              path: 'create', // Chemin devient '/objectives/create'
+              builder: (context, state) => const CreateObjectivePage(),
+            ),
+          ],
         ),
         GoRoute(
           path: '/savings',
@@ -129,6 +179,10 @@ final router = GoRouter(
         GoRoute(
           path: '/filter',
           builder: (context, state) => const FilterPage(),
+        ),
+        GoRoute(
+          path: '/insights', // Définissons la route '/insights'
+          builder: (context, state) => const InsightsPage(),
         ),
         GoRoute(
           path: '/settings',

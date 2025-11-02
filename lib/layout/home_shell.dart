@@ -10,36 +10,38 @@ class HomeShell extends StatefulWidget {
 }
 
 class _HomeShellState extends State<HomeShell> {
-  // Définition des routes de la barre de navigation
+  // Définition des routes de la barre de navigation (MODIFIÉ : 'cards' remplacé par 'objectives')
   static const List<String> _routes = [
     '/dashboard',
     '/savings',
-    '/expense_entry', // Item central 'Add'
-    '/cards',
+    '/expense_entry', // Item central 'Ajouter'
+    '/objectives', // NOUVELLE ROUTE : Objectifs
     '/settings',
   ];
 
-  // Définition des items de la barre de navigation (simplifiée)
+  // Définition des items de la barre de navigation (MODIFIÉ : 'Cards' remplacé par 'Objectifs')
   static const List<BottomNavigationBarItem> _navItems = [
-    BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+    BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Accueil'),
     BottomNavigationBarItem(
       icon: Icon(Icons.account_balance_wallet_rounded),
-      label: 'Savings',
+      label: 'Épargne',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.add_circle_rounded, size: 30),
-      label: 'Add',
+      label: 'Ajouter',
     ), // Icône centrale plus grande
     BottomNavigationBarItem(
-      icon: Icon(Icons.credit_card_rounded),
-      label: 'Cards',
+      icon: Icon(Icons.flag_rounded), // Icône suggérée pour les objectifs
+      label: 'Objectifs',
     ),
-    BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Account'),
+    BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Compte'),
   ];
 
   // Fonction pour déterminer l'index initial basé sur la route actuelle
   int _getCurrentIndex(String location) {
+    // La méthode startsWith est robuste pour les routes avec sous-chemins (ex: /dashboard/details)
     final index = _routes.indexWhere((route) => location.startsWith(route));
+    // Retourne l'index trouvé ou 0 (Accueil) par défaut
     return index >= 0 ? index : 0;
   }
 
@@ -48,10 +50,11 @@ class _HomeShellState extends State<HomeShell> {
       context,
     ).routerDelegate.currentConfiguration.uri.toString();
 
-    // Si la route est déjà active, ne rien faire
+    // Optimisation : Si la route correspondante est déjà active, on ne navigue pas.
     if (currentRoute.startsWith(_routes[index])) return;
 
     // Navigue vers la nouvelle route
+    // On utilise `go` pour remplacer la vue actuelle et ne pas empiler l'historique de navigation.
     context.go(_routes[index]);
   }
 
@@ -66,7 +69,7 @@ class _HomeShellState extends State<HomeShell> {
     ).routerDelegate.currentConfiguration.uri.toString();
     final selectedIndex = _getCurrentIndex(location);
 
-    // Ajustement des couleurs pour le mode sombre/clair et l'esthétique violette
+    // Définition des couleurs
     final selectedColor = theme.colorScheme.primary; // Violet
     final unselectedColor = isDarkMode
         ? Colors.grey.shade400
@@ -74,6 +77,7 @@ class _HomeShellState extends State<HomeShell> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
+      // Le corps de l'application est le widget enfant (page) actuel de GoRouter
       body: SafeArea(child: widget.child),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -82,10 +86,9 @@ class _HomeShellState extends State<HomeShell> {
         onTap: _onItemTapped,
 
         // --- Amélioration de l'UX et du Style ---
-        type: BottomNavigationBarType
-            .fixed, // Empêche le décalage lors de la sélection
-        backgroundColor:
-            theme.colorScheme.surface, // S'adapte au mode sombre/clair
+        type:
+            BottomNavigationBarType.fixed, // Empêche l'animation de glissement
+        backgroundColor: theme.colorScheme.background,
         elevation: 10,
 
         // Couleurs
@@ -99,17 +102,15 @@ class _HomeShellState extends State<HomeShell> {
         ),
         unselectedLabelStyle: const TextStyle(fontSize: 10),
 
-        // Style spécial pour l'icône centrale 'Add' (index 2)
+        // Style spécial pour l'icône centrale 'Ajouter' (index 2)
         selectedIconTheme: IconThemeData(
           color: selectedColor,
-          size: selectedIndex == 2
-              ? 30
-              : 24, // Taille spéciale pour l'item 'Add'
+          // L'icône 'Ajouter' (index 2) a une taille plus grande
+          size: selectedIndex == 2 ? 30 : 24,
         ),
         unselectedIconTheme: IconThemeData(
-          color: selectedIndex == 2
-              ? selectedColor
-              : unselectedColor, // L'icône 'Add' est toujours en couleur primaire
+          // L'icône 'Ajouter' est toujours colorée même si elle n'est pas sélectionnée
+          color: selectedIndex == 2 ? selectedColor : unselectedColor,
           size: selectedIndex == 2 ? 30 : 24,
         ),
       ),

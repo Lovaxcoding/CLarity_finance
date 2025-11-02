@@ -30,7 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
   # Les essentiels déjà là
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.10.3
@@ -45,7 +46,7 @@ dependencies:
   image_picker: ^1.1.2 # Pour choisir une photo dans la galerie/caméra
   
   # 2. Utilitaires de dates/heure (utile pour le suivi)
-  intl: ^0.19.0 # Pour formater les dates/montants dans la bonne langue (locale)
+  intl: ^0.20.2 # Pour formater les dates/montants dans la bonne langue (locale)
   
   # 3. Pour un style UI cohérent et des icônes plus variées que Material
   font_awesome_flutter: ^10.7.0 # Offre des milliers d'icônes modernes

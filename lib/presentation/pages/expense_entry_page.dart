@@ -224,7 +224,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                   AnimatedProgressDots(
                     currentIndex: _currentStep,
                     count: _totalSteps,
-                    primaryColor: primaryColor,
+                    primaryColor: Colors.purple.shade600,
                   ),
                   const Spacer(),
                   // Espace réservé si le bouton retour n'est pas là pour maintenir l'alignement
@@ -289,7 +289,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                     ? null // Désactiver le bouton si la révision n'est pas confirmée (facultatif)
                     : _nextStep,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
+                  backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -298,7 +298,12 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                     double.infinity,
                     56,
                   ), // Bouton plus grand
-                  disabledBackgroundColor: primaryColor.withOpacity(0.5),
+                  disabledBackgroundColor: const Color.fromARGB(
+                    255,
+                    51,
+                    4,
+                    64,
+                  ).withOpacity(0.5), // Couleur désactivée
                 ),
                 child: _isLoading
                     ? const SizedBox(
@@ -341,7 +346,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
   // --- ÉTAPE 1 : Saisie du Montant ---
   Widget _buildAmountStep(ThemeData theme, Color primaryColor) {
     return _ExpenseStepContainer(
-      title: "1. Quel est le montant de la dépense ?",
+      title: "Le montant de la dépense ?",
       description: "Entrez le montant exact en Ariary Malgache (MGA).",
       child: Column(
         children: [
@@ -352,18 +357,18 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
             textAlign: TextAlign.center,
             style: theme.textTheme.headlineLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: primaryColor,
+              color: Colors.purple.shade600,
             ),
             decoration: InputDecoration(
               hintText: '0.00',
               hintStyle: theme.textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.w300,
-                color: primaryColor.withOpacity(0.4),
+                color: Colors.purple.shade600,
               ),
               prefixText: 'MGA ',
               prefixStyle: theme.textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.w400,
-                color: primaryColor.withOpacity(0.7),
+                color: Colors.purple.shade600,
               ),
               border: InputBorder.none, // Supprimer la bordure
               contentPadding: EdgeInsets.zero,
@@ -383,25 +388,30 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
             ),
           ),
           // SÉLECTION DE DATE
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: theme.dividerColor),
-            ),
-            leading: const Icon(Icons.calendar_today),
-            title: Text(
-              'Date de la dépense',
-              style: theme.textTheme.titleMedium,
-            ),
-            trailing: Text(
-              // Afficher la date sélectionnée (format court)
-              '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: primaryColor,
+          Padding(
+            // On spécifie une marge de 20.0 en haut (top)
+            padding: const EdgeInsets.only(top: 20.0),
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: theme.dividerColor),
               ),
+              leading: const Icon(Icons.calendar_today),
+              title: Text(
+                'Date de la dépense',
+                style: theme.textTheme.bodyLarge,
+              ),
+              trailing: Text(
+                // Afficher la date sélectionnée (format court)
+                '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                style: TextStyle(
+                  fontStyle: theme.textTheme.bodyLarge!.fontStyle,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple.shade600,
+                ),
+              ),
+              onTap: () => _selectDate(context),
             ),
-            onTap: () => _selectDate(context),
           ),
         ],
       ),
@@ -411,7 +421,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
   // --- ÉTAPE 2 : Choix de la Catégorie ---
   Widget _buildCategoryStep(ThemeData theme, Color primaryColor) {
     return _ExpenseStepContainer(
-      title: "2. Choisissez la catégorie de dépense",
+      title: "Choisissez la catégorie de dépense",
       description: "Cela aidera à analyser votre budget.",
       child: ListView.builder(
         shrinkWrap: true,
@@ -424,7 +434,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Card(
               color: isSelected
-                  ? primaryColor.withOpacity(0.1)
+                  ? Colors.purple.shade600
                   : (theme.brightness == Brightness.dark
                         ? Colors.grey[900]
                         : Colors.white),
@@ -432,7 +442,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                 borderRadius: BorderRadius.circular(12),
                 side: BorderSide(
                   color: isSelected
-                      ? primaryColor
+                      ? Colors.purple.shade600
                       : (theme.brightness == Brightness.dark
                             ? Colors.grey[800]!
                             : Colors.grey[300]!),
@@ -442,18 +452,25 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
               child: ListTile(
                 leading: Icon(
                   _getCategoryIcon(category),
-                  color: isSelected ? primaryColor : theme.iconTheme.color,
+                  color: isSelected ? Colors.white : theme.iconTheme.color,
                 ),
                 title: Text(
                   category,
+
                   style: TextStyle(
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
+                    color: isSelected
+                        ? Colors.white
+                        : theme.textTheme.bodyLarge!.color,
                   ),
                 ),
                 trailing: isSelected
-                    ? Icon(Icons.check_circle, color: primaryColor)
+                    ? Icon(
+                        Icons.check_circle,
+                        color: theme.colorScheme.onPrimary,
+                      )
                     : null,
                 onTap: () {
                   setState(() {
@@ -488,7 +505,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
     final isDark = theme.brightness == Brightness.dark;
 
     return _ExpenseStepContainer(
-      title: "3. Confirmez la dépense",
+      title: "Confirmez la dépense",
       description: "Vérifiez les détails avant d'enregistrer.",
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,7 +523,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                 _buildReviewItem(
                   "Montant total",
                   "${_amountCtrl.text} MGA",
-                  primaryColor,
+                  Colors.purple.shade600,
                   isBold: true,
                 ),
                 const Divider(),
@@ -514,12 +531,12 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                 _buildReviewItem(
                   "Notes",
                   _notesCtrl.text.isEmpty ? "Aucune note" : _notesCtrl.text,
-                  primaryColor,
+                  Colors.purple.shade600,
                 ),
                 _buildReviewItem(
                   "Date",
                   '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}', // Utiliser la date sélectionnée
-                  primaryColor,
+                  Colors.purple.shade600,
                 ),
               ],
             ),
@@ -532,7 +549,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                 value: _confirmedReview,
                 onChanged: (val) =>
                     setState(() => _confirmedReview = val ?? false),
-                activeColor: primaryColor,
+                activeColor: Colors.purple.shade600,
               ),
               const Flexible(
                 child: Text("J'ai vérifié et je confirme les détails."),

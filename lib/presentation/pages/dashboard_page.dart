@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart'; // Pour formater le montant
 import 'package:myapp/model/profile_model.dart';
@@ -244,7 +245,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     "Historique des Transactions",
                     style: theme.textTheme.titleMedium,
                   ),
-                  TextButton(onPressed: () {}, child: const Text("Voir tout")),
+                  TextButton(
+                    onPressed: () {
+                      context.go('/insights');
+                    },
+                    child: const Text("Voir tout"),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),

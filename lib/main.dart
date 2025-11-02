@@ -5,12 +5,15 @@ import 'package:myapp/core/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final supabase = Supabase.instance.client;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await initializeDateFormatting('fr', null);
 
   final supabaseUrl = dotenv.env['SUPABASE_URL'];
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
@@ -46,6 +49,23 @@ class MyApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
           routerConfig: router,
+
+          // Utiliser 'const' pour la liste des délégués (car ils sont tous const)
+          localizationsDelegates: const [ 
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          
+          // Retirer 'const' de la liste des locales et des objets Locale
+          // car la liste des locales supportées n'est pas traitée comme une constante de compile.
+          supportedLocales: [ 
+            Locale('en', ''), 
+            Locale('fr', 'FR'),
+          ],
+          
+          // Retirer 'const' de l'objet Locale pour être cohérent avec supportedLocales
+          locale: const Locale('fr', 'FR'),
         );
       },
     );
