@@ -236,48 +236,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 16),
 
               // --- Séparateur et boutons sociaux ---
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 1,
-                      color: isDark
-                          ? Colors.grey.shade700
-                          : Colors.grey.shade300,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      "ou continuer avec",
-                      style: TextStyle(color: hintColor, fontSize: 13),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 1,
-                      color: isDark
-                          ? Colors.grey.shade700
-                          : Colors.grey.shade300,
-                    ),
-                  ),
-                ],
-              ),
-
               const SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _socialButton('assets/google.png', isDark),
-                  const SizedBox(width: 16),
-                  _socialButton('assets/apple.png', isDark),
-                  const SizedBox(width: 16),
-                  _socialButton('assets/facebook.png', isDark),
-                  const SizedBox(width: 16),
-                  _socialButton('assets/x.png', isDark),
-                ],
-              ),
             ],
           ),
         ),
